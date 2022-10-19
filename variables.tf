@@ -437,6 +437,12 @@ variable "atlantis_override_default_aws_profile" {
   description = "Whether to override default atlantis profile in .aws/config with var.aws_profiles"
 }
 
+variable "atlantis_replica_count" {
+  type        = number
+  default     = 1
+  description = "Number of Atlantis replicas"
+}
+
 variable "atlantis_terraform_version" {
   type        = string
   default     = ""

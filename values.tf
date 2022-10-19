@@ -16,6 +16,7 @@ locals {
         profiles                      = var.atlantis_aws_profiles
       }) : null
     }
+    "replicaCount" : var.atlantis_replica_count
     # add non-sensitive default values here
   })
 }
