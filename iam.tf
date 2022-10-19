@@ -1,6 +1,24 @@
 locals {
   irsa_role_create = var.enabled && var.rbac_create && var.service_account_create && var.irsa_role_create
-  irsa_role_arn = local.irsa_role_create ? aws_iam_role.this[0].arn : var.atlantis_irsa_role_arn
+  irsa_role_arn    = local.irsa_role_create ? aws_iam_role.this[0].arn : var.irsa_role_arn
+}
+
+data "aws_iam_policy_document" "this" {
+  count = local.irsa_role_create && var.irsa_policy_enabled && !var.irsa_assume_role_enabled ? 1 : 0
+
+  statement {
+    sid = "AtlantisAdmin"
+
+    actions = [
+      "*"
+    ] # checkov:skip=CKV_AWS_111
+
+    resources = [
+      "*",
+    ]
+
+    effect = "Allow"
+  }
 }
 
 data "aws_iam_policy_document" "this_assume" {
@@ -24,7 +42,7 @@ resource "aws_iam_policy" "this" {
   name        = "${var.irsa_role_name_prefix}-${var.helm_chart_name}"
   path        = "/"
   description = "Policy for Atlantis service"
-  policy      = data.aws_iam_policy_document.this_assume[0].json
+  policy      = var.irsa_assume_role_enabled ? data.aws_iam_policy_document.this_assume[0].json : data.aws_iam_policy_document.this[0].json
 
   tags = var.irsa_tags
 }
