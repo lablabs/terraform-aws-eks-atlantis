@@ -14,6 +14,6 @@ output "kubernetes_application_attributes" {
 }
 
 output "iam_role_attributes" {
-  description = "Atlantis IAM role atributes"
+  description = "Atlantis IAM role attributes"
   value       = try(aws_iam_role.this[0], {})
 }
