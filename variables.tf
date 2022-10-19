@@ -443,6 +443,24 @@ variable "atlantis_replica_count" {
   description = "Number of Atlantis replicas"
 }
 
+variable "atlantis_node_selector" {
+  type        = any
+  default     = {}
+  description = "Node selector configuration"
+}
+
+variable "atlantis_tolerations" {
+  type        = list
+  default     = []
+  description = "Tolerations configuration"
+}
+
+variable "atlantis_affinity" {
+  type        = any
+  default     = {}
+  description = "Affinity configuration"
+}
+
 variable "atlantis_terraform_version" {
   type        = string
   default     = ""

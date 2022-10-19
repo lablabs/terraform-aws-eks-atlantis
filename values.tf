@@ -17,6 +17,9 @@ locals {
       }) : null
     }
     "replicaCount" : var.atlantis_replica_count
+    "nodeSelector" : var.atlantis_node_selector
+    "tolerations" : var.atlantis_tolerations
+    "affinity" : var.atlantis_affinity
     # add non-sensitive default values here
   })
 }
