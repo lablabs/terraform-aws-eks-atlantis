@@ -18,24 +18,24 @@ variable "cluster_identity_oidc_issuer_arn" {
 
 variable "helm_chart_name" {
   type        = string
-  default     = "<$addon-name>"
+  default     = "atlantis"
   description = "Helm chart name to be installed"
 }
 
 variable "helm_chart_version" {
   type        = string
-  default     = "<helm_chart_version>"
+  default     = "4.1.2"
   description = "Version of the Helm chart"
 }
 
 variable "helm_release_name" {
   type        = string
-  default     = "<$addon-name>"
+  default     = "atlantis"
   description = "Helm release name"
 }
 variable "helm_repo_url" {
   type        = string
-  default     = "<helm_repo_url>"
+  default     = "https://runatlantis.github.io/helm-charts"
   description = "Helm repository"
 }
 
@@ -47,20 +47,20 @@ variable "helm_create_namespace" {
 
 variable "namespace" {
   type        = string
-  default     = "<$addon-name>"
-  description = "The K8s namespace in which the <$addon-name> service account has been created"
+  default     = "atlantis"
+  description = "The K8s namespace in which the atlantis service account has been created"
 }
 
 variable "settings" {
   type        = map(any)
   default     = {}
-  description = "Additional helm sets which will be passed to the Helm chart values, see https://hub.helm.sh/charts/stable/<$addon-name>"
+  description = "Additional helm sets which will be passed to the Helm chart values, see https://artifacthub.io/packages/helm/atlantis/atlantis"
 }
 
 variable "values" {
   type        = string
   default     = ""
-  description = "Additional yaml encoded values which will be passed to the Helm chart, see https://hub.helm.sh/charts/stable/<$addon-name>"
+  description = "Additional yaml encoded values which will be passed to the Helm chart, see https://artifacthub.io/packages/helm/atlantis/atlantis"
 }
 
 # ================ IRSA variables (optional) ================
@@ -79,8 +79,8 @@ variable "service_account_create" {
 
 variable "service_account_name" {
   type        = string
-  default     = "<$addon-name>"
-  description = "The k8s <$addon-name> service account name"
+  default     = "atlantis"
+  description = "The k8s atlantis service account name"
 }
 
 variable "irsa_role_create" {
@@ -89,9 +89,15 @@ variable "irsa_role_create" {
   description = "Whether to create IRSA role and annotate service account"
 }
 
+variable "irsa_role_arn" {
+  type        = string
+  default     = ""
+  description = "IAM role ARN to link with service account. Use if irsa_role_create is set to false"
+}
+
 variable "irsa_policy_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Whether to create opinionated policy to allow operations on specified zones in `policy_allowed_zone_ids`."
 }
 
@@ -115,8 +121,8 @@ variable "irsa_additional_policies" {
 
 variable "irsa_role_name_prefix" {
   type        = string
-  default     = "<$addon-name>-irsa"
-  description = "The IRSA role name prefix for <$addon-name>"
+  default     = "atlantis-irsa"
+  description = "The IRSA role name prefix for atlantis"
 }
 
 variable "irsa_tags" {
@@ -124,6 +130,7 @@ variable "irsa_tags" {
   default     = {}
   description = "IRSA resources tags"
 }
+
 
 # ================ argo variables (required) ================
 
@@ -397,4 +404,29 @@ variable "helm_postrender" {
   type        = map(any)
   default     = {}
   description = "Value block with a path to a binary file to run after helm renders the manifest which can alter the manifest contents"
+}
+
+# ================ addon variables (optional) ================
+variable "atlantis_url" {
+  type        = string
+  default     = ""
+  description = "Atlantis URL"
+}
+
+variable "atlantis_irsa_role_arn" { # TODO create irsa_role_arn instead?
+  type        = string
+  default     = ""
+  description = "Atlantis role ARN to link with service account. Use if irsa_role_create is set to false"
+}
+
+variable "aws_profiles" {
+  type        = string
+  default     = ""
+  description = "Content of .aws/config file. If var.atlantis_override_irsa_aws_profile is false, appends to .aws/config, else overrides the config contents"
+}
+
+variable "atlantis_override_irsa_aws_profile" {
+  type        = bool
+  default     = false
+  description = "Whether to override default atlantis profile in .aws/config with values from var.aws_profiles"
 }
