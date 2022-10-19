@@ -92,13 +92,13 @@ variable "irsa_role_create" {
 variable "irsa_role_arn" {
   type        = string
   default     = ""
-  description = "IAM role ARN to link with service account. Use if irsa_role_create is set to false"
+  description = "IAM role ARN to link with service account. If var.irsa_role_create is set to true, a new role will be created and this role will be ignored"
 }
 
 variable "irsa_policy_enabled" {
   type        = bool
   default     = false
-  description = "Whether to create opinionated policy to allow operations on specified zones in `policy_allowed_zone_ids`."
+  description = "Whether to create opinionated IAM policy. CAUTION: will create policy with admin permissions. Consider providing own policy via var.irsa_additional_policies or own role via var.irsa_role_arn"
 }
 
 variable "irsa_assume_role_enabled" {
@@ -413,20 +413,32 @@ variable "atlantis_url" {
   description = "Atlantis URL"
 }
 
-variable "atlantis_irsa_role_arn" { # TODO create irsa_role_arn instead?
-  type        = string
-  default     = ""
-  description = "Atlantis role ARN to link with service account. Use if irsa_role_create is set to false"
+variable "atlantis_org_allowlist" {
+  type        = list(string)
+  default     = []
+  description = "List of repositories to allow webhooks from"
 }
 
-variable "aws_profiles" {
-  type        = string
-  default     = ""
-  description = "Content of .aws/config file. If var.atlantis_override_irsa_aws_profile is false, appends to .aws/config, else overrides the config contents"
+variable "atlantis_enable_aws_profiles" {
+  type        = bool
+  default     = true
+  description = "Whether to enable AWS profiles"
 }
 
-variable "atlantis_override_irsa_aws_profile" {
+variable "atlantis_aws_profiles" {
+  type        = string
+  default     = ""
+  description = "Set AWS profiles in .aws/config file. If var.atlantis_override_default_aws_profile is false, appends to .aws/config, else overrides the config contents"
+}
+
+variable "atlantis_override_default_aws_profile" {
   type        = bool
   default     = false
-  description = "Whether to override default atlantis profile in .aws/config with values from var.aws_profiles"
+  description = "Whether to override default atlantis profile in .aws/config with var.aws_profiles"
+}
+
+variable "atlantis_terraform_version" {
+  type        = string
+  default     = ""
+  description = "Default Terraform version to be used by Atlantis"
 }

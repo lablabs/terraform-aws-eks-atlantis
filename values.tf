@@ -1,19 +1,22 @@
 locals {
   values_default = yamlencode({
-    "serviceAccount" : {
+    "atlantisUrl" : var.atlantis_url
+    "orgAllowlist" : join(",", var.atlantis_org_allowlist)
+    "serviceAccount" : var.service_account_create ? {
+      "create" : var.service_account_create
       "name" : var.service_account_name
       "annotations" : {
         "eks.amazonaws.com/role-arn" : local.irsa_role_arn
       }
-    }
+    } : null
     "aws" : {
-      "config": templatefile("${path.module}/templates/.aws/config", {
-        override_default_irsa_profile = var.atlantis_override_irsa_aws_profile
+      "config" : var.atlantis_enable_aws_profiles ? templatefile("${path.module}/templates/.aws/config", {
+        override_default_irsa_profile = var.atlantis_override_default_aws_profile
         role_arn                      = local.irsa_role_arn
-        profiles                      = var.aws_profiles
-      })
+        profiles                      = var.atlantis_aws_profiles
+      }) : null
     }
-    # add default values here
+    # add non-sensitive default values here
   })
 }
 
@@ -24,3 +27,4 @@ data "utils_deep_merge_yaml" "values" {
     var.values
   ])
 }
+
