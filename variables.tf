@@ -434,7 +434,7 @@ variable "atlantis_aws_profiles" {
 variable "atlantis_override_default_aws_profile" {
   type        = bool
   default     = false
-  description = "Whether to override default atlantis profile in .aws/config with var.aws_profiles"
+  description = "Whether to override default atlantis profile in .aws/config with var.atlantis_aws_profiles"
 }
 
 variable "atlantis_replica_count" {
