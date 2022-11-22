@@ -1,6 +1,5 @@
 locals {
   irsa_role_create = var.enabled && var.rbac_create && var.service_account_create && var.irsa_role_create
-  irsa_role_arn    = local.irsa_role_create ? aws_iam_role.this[0].arn : var.irsa_role_arn
 }
 
 data "aws_iam_policy_document" "this" {
