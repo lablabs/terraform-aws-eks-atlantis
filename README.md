@@ -1,4 +1,4 @@
-# AWS EKS <$addon-name> Terraform module
+# AWS EKS Atlantis Terraform module
 
 [<img src="https://lablabs.io/static/ll-logo.png" width=350px>](https://lablabs.io/)
 
@@ -6,12 +6,12 @@ We help companies build, run, deploy and scale software and infrastructure by em
 
 ---
 
-[![Terraform validate](https://github.com/lablabs/terraform-aws-eks-<$addon-name>/actions/workflows/validate.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-<$addon-name>/actions/workflows/validate.yaml)
-[![pre-commit](https://github.com/lablabs/terraform-aws-<$addon-name>/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-<$addon-name>/actions/workflows/pre-commit.yml)
+[![Terraform validate](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml)
+[![pre-commit](https://github.com/lablabs/terraform-aws-atlantis/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml)
 
 ## Description
 
-A terraform module to deploy the <$addon-name> on Amazon EKS cluster.
+A terraform module to deploy Atlantis on Amazon EKS cluster.
 
 ## Related Projects
 
@@ -32,14 +32,25 @@ To overcome this issue, the module deploys the ArgoCD application object using t
 
 Create helm release resource and deploy it as argo application (set `enabled = true`, `argo_enabled = true` and `argo_helm_enabled = true`)
 
-<!-- Uncomment paragraph bellow if addon contains IAM resources
 ## AWS IAM resources
+To disable of creation IRSA role and IRSA policy, set `irsa_role_create = false` and `irsa_policy_enabled = false`, respectively.
+To provide your own IRSA role, set the ARN via `irsa_role_arn` and set `irsa_role_create = false`.
 
-To disable of creation IRSA role and IRSA policy, set `irsa_role_create = false` and `irsa_policy_enabled = false`, respectively -->
-
-<!-- Uncomment paragraph bellow if addon uses Role assuming
 ### Role assuming
-To assume role set `irsa_assume_role_enabled = true` and specify `irsa_assume_role_arn` variable -->
+To assume role set `irsa_assume_role_enabled = true` and specify `irsa_assume_role_arn` variable.
+
+## Configuration
+
+### AWS profiles
+This module facilitates the creation of AWS config file containing profiles that may be used by Atlantis to assume various roles via the IRSA role.
+
+To enable this functionality, set the variable `atlantis_enable_aws_profiles = true`, and provide the config file contents in `atlantis_aws_profiles` (e.g. `atlantis_aws_profiles = file("path/to/config")`).
+
+If `atlantis_override_default_aws_profile = false`, the module will create a default AWS profile `atlantis` and append the contents of `atlantis_aws_profiles` to the final file. Make sure to set `source_profile = atlantis` for all roles in the config.
+The role in the `atlantis` either uses the role created by this module, or the role provided via `irsa_role_arn`.
+
+If `atlantis_override_default_aws_profile = true`, the entire config file will be overridden by `atlantis_aws_profiles`. Source IRSA profile needs to be part of the file provided in `atlantis_aws_profiles`.
+
 
 ## Examples
 
@@ -98,10 +109,13 @@ No modules.
 | <a name="input_argo_project"></a> [argo\_project](#input\_argo\_project) | ArgoCD Application project | `string` | `"default"` | no |
 | <a name="input_argo_spec"></a> [argo\_spec](#input\_argo\_spec) | ArgoCD Application spec configuration. Override or create additional spec parameters | `any` | `{}` | no |
 | <a name="input_argo_sync_policy"></a> [argo\_sync\_policy](#input\_argo\_sync\_policy) | ArgoCD syncPolicy manifest parameter | `any` | `{}` | no |
+| <a name="input_atlantis_aws_profiles"></a> [atlantis\_aws\_profiles](#input\_atlantis\_aws\_profiles) | Set AWS profiles in .aws/config file. If var.atlantis\_override\_default\_aws\_profile is false, appends to .aws/config, else overrides the config contents | `string` | `""` | no |
+| <a name="input_atlantis_enable_aws_profiles"></a> [atlantis\_enable\_aws\_profiles](#input\_atlantis\_enable\_aws\_profiles) | Whether to enable AWS profiles | `bool` | `false` | no |
+| <a name="input_atlantis_override_default_aws_profile"></a> [atlantis\_override\_default\_aws\_profile](#input\_atlantis\_override\_default\_aws\_profile) | Whether to override default atlantis profile in .aws/config with var.atlantis\_aws\_profiles | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Variable indicating whether deployment is enabled | `bool` | `true` | no |
 | <a name="input_helm_atomic"></a> [helm\_atomic](#input\_helm\_atomic) | If set, installation process purges chart on fail. The wait flag will be set automatically if atomic is used | `bool` | `false` | no |
-| <a name="input_helm_chart_name"></a> [helm\_chart\_name](#input\_helm\_chart\_name) | Helm chart name to be installed | `string` | `"<$addon-name>"` | no |
-| <a name="input_helm_chart_version"></a> [helm\_chart\_version](#input\_helm\_chart\_version) | Version of the Helm chart | `string` | `"<helm_chart_version>"` | no |
+| <a name="input_helm_chart_name"></a> [helm\_chart\_name](#input\_helm\_chart\_name) | Helm chart name to be installed | `string` | `"atlantis"` | no |
+| <a name="input_helm_chart_version"></a> [helm\_chart\_version](#input\_helm\_chart\_version) | Version of the Helm chart | `string` | `"4.6.0"` | no |
 | <a name="input_helm_cleanup_on_fail"></a> [helm\_cleanup\_on\_fail](#input\_helm\_cleanup\_on\_fail) | Allow deletion of new resources created in this helm upgrade when upgrade fails | `bool` | `false` | no |
 | <a name="input_helm_create_namespace"></a> [helm\_create\_namespace](#input\_helm\_create\_namespace) | Create the namespace if it does not yet exist | `bool` | `true` | no |
 | <a name="input_helm_dependency_update"></a> [helm\_dependency\_update](#input\_helm\_dependency\_update) | Runs helm dependency update before installing the chart | `bool` | `false` | no |
@@ -116,14 +130,14 @@ No modules.
 | <a name="input_helm_postrender"></a> [helm\_postrender](#input\_helm\_postrender) | Value block with a path to a binary file to run after helm renders the manifest which can alter the manifest contents | `map(any)` | `{}` | no |
 | <a name="input_helm_recreate_pods"></a> [helm\_recreate\_pods](#input\_helm\_recreate\_pods) | Perform pods restart during helm upgrade/rollback | `bool` | `false` | no |
 | <a name="input_helm_release_max_history"></a> [helm\_release\_max\_history](#input\_helm\_release\_max\_history) | Maximum number of release versions stored per release | `number` | `0` | no |
-| <a name="input_helm_release_name"></a> [helm\_release\_name](#input\_helm\_release\_name) | Helm release name | `string` | `"<$addon-name>"` | no |
+| <a name="input_helm_release_name"></a> [helm\_release\_name](#input\_helm\_release\_name) | Helm release name | `string` | `"atlantis"` | no |
 | <a name="input_helm_render_subchart_notes"></a> [helm\_render\_subchart\_notes](#input\_helm\_render\_subchart\_notes) | If set, render helm subchart notes along with the parent | `bool` | `true` | no |
 | <a name="input_helm_replace"></a> [helm\_replace](#input\_helm\_replace) | Re-use the given name of helm release, only if that name is a deleted release which remains in the history. This is unsafe in production | `bool` | `false` | no |
 | <a name="input_helm_repo_ca_file"></a> [helm\_repo\_ca\_file](#input\_helm\_repo\_ca\_file) | Helm repositories cert file | `string` | `""` | no |
 | <a name="input_helm_repo_cert_file"></a> [helm\_repo\_cert\_file](#input\_helm\_repo\_cert\_file) | Helm repositories cert file | `string` | `""` | no |
 | <a name="input_helm_repo_key_file"></a> [helm\_repo\_key\_file](#input\_helm\_repo\_key\_file) | Helm repositories cert key file | `string` | `""` | no |
 | <a name="input_helm_repo_password"></a> [helm\_repo\_password](#input\_helm\_repo\_password) | Password for HTTP basic authentication against the helm repository | `string` | `""` | no |
-| <a name="input_helm_repo_url"></a> [helm\_repo\_url](#input\_helm\_repo\_url) | Helm repository | `string` | `"<helm_repo_url>"` | no |
+| <a name="input_helm_repo_url"></a> [helm\_repo\_url](#input\_helm\_repo\_url) | Helm repository | `string` | `"https://runatlantis.github.io/helm-charts"` | no |
 | <a name="input_helm_repo_username"></a> [helm\_repo\_username](#input\_helm\_repo\_username) | Username for HTTP basic authentication against the helm repository | `string` | `""` | no |
 | <a name="input_helm_reset_values"></a> [helm\_reset\_values](#input\_helm\_reset\_values) | When upgrading, reset the values to the ones built into the helm chart | `bool` | `false` | no |
 | <a name="input_helm_reuse_values"></a> [helm\_reuse\_values](#input\_helm\_reuse\_values) | When upgrading, reuse the last helm release's values and merge in any overrides. If 'helm\_reset\_values' is specified, this is ignored | `bool` | `false` | no |
@@ -135,16 +149,17 @@ No modules.
 | <a name="input_irsa_additional_policies"></a> [irsa\_additional\_policies](#input\_irsa\_additional\_policies) | Map of the additional policies to be attached to default role. Where key is arbitrary id and value is policy arn. | `map(string)` | `{}` | no |
 | <a name="input_irsa_assume_role_arn"></a> [irsa\_assume\_role\_arn](#input\_irsa\_assume\_role\_arn) | Assume role arn. Assume role must be enabled. | `string` | `""` | no |
 | <a name="input_irsa_assume_role_enabled"></a> [irsa\_assume\_role\_enabled](#input\_irsa\_assume\_role\_enabled) | Whether IRSA is allowed to assume role defined by irsa\_assume\_role\_arn. | `bool` | `false` | no |
-| <a name="input_irsa_policy_enabled"></a> [irsa\_policy\_enabled](#input\_irsa\_policy\_enabled) | Whether to create opinionated policy to allow operations on specified zones in `policy_allowed_zone_ids`. | `bool` | `true` | no |
+| <a name="input_irsa_policy_enabled"></a> [irsa\_policy\_enabled](#input\_irsa\_policy\_enabled) | Whether to create opinionated IAM policy. CAUTION: will create policy with admin permissions. Consider providing own policy via var.irsa\_additional\_policies or own role via var.irsa\_role\_arn | `bool` | `false` | no |
+| <a name="input_irsa_role_arn"></a> [irsa\_role\_arn](#input\_irsa\_role\_arn) | IAM role ARN to link with service account. If var.irsa\_role\_create is set to true, a new role will be created and this role will be ignored | `string` | `""` | no |
 | <a name="input_irsa_role_create"></a> [irsa\_role\_create](#input\_irsa\_role\_create) | Whether to create IRSA role and annotate service account | `bool` | `true` | no |
-| <a name="input_irsa_role_name_prefix"></a> [irsa\_role\_name\_prefix](#input\_irsa\_role\_name\_prefix) | The IRSA role name prefix for <$addon-name> | `string` | `"<$addon-name>-irsa"` | no |
+| <a name="input_irsa_role_name_prefix"></a> [irsa\_role\_name\_prefix](#input\_irsa\_role\_name\_prefix) | The IRSA role name prefix for atlantis | `string` | `"atlantis-irsa"` | no |
 | <a name="input_irsa_tags"></a> [irsa\_tags](#input\_irsa\_tags) | IRSA resources tags | `map(string)` | `{}` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | The K8s namespace in which the <$addon-name> service account has been created | `string` | `"<$addon-name>"` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | The K8s namespace in which the atlantis service account has been created | `string` | `"atlantis"` | no |
 | <a name="input_rbac_create"></a> [rbac\_create](#input\_rbac\_create) | Whether to create and use RBAC resources | `bool` | `true` | no |
 | <a name="input_service_account_create"></a> [service\_account\_create](#input\_service\_account\_create) | Whether to create Service Account | `bool` | `true` | no |
-| <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The k8s <$addon-name> service account name | `string` | `"<$addon-name>"` | no |
-| <a name="input_settings"></a> [settings](#input\_settings) | Additional helm sets which will be passed to the Helm chart values, see https://hub.helm.sh/charts/stable/<$addon-name> | `map(any)` | `{}` | no |
-| <a name="input_values"></a> [values](#input\_values) | Additional yaml encoded values which will be passed to the Helm chart, see https://hub.helm.sh/charts/stable/<$addon-name> | `string` | `""` | no |
+| <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | The k8s atlantis service account name | `string` | `"atlantis"` | no |
+| <a name="input_settings"></a> [settings](#input\_settings) | Additional helm sets which will be passed to the Helm chart values, see https://artifacthub.io/packages/helm/atlantis/atlantis | `map(any)` | `{}` | no |
+| <a name="input_values"></a> [values](#input\_values) | Additional yaml encoded values which will be passed to the Helm chart, see https://artifacthub.io/packages/helm/atlantis/atlantis | `string` | `""` | no |
 
 ## Outputs
 
@@ -152,7 +167,7 @@ No modules.
 |------|-------------|
 | <a name="output_helm_release_application_metadata"></a> [helm\_release\_application\_metadata](#output\_helm\_release\_application\_metadata) | Argo application helm release attributes |
 | <a name="output_helm_release_metadata"></a> [helm\_release\_metadata](#output\_helm\_release\_metadata) | Helm release attributes |
-| <a name="output_iam_role_attributes"></a> [iam\_role\_attributes](#output\_iam\_role\_attributes) | <$addon-name> IAM role atributes |
+| <a name="output_iam_role_attributes"></a> [iam\_role\_attributes](#output\_iam\_role\_attributes) | Atlantis IAM role attributes |
 | <a name="output_kubernetes_application_attributes"></a> [kubernetes\_application\_attributes](#output\_kubernetes\_application\_attributes) | Argo kubernetes manifest attributes |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

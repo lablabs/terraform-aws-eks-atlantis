@@ -5,19 +5,11 @@ locals {
 data "aws_iam_policy_document" "this" {
   count = local.irsa_role_create && var.irsa_policy_enabled && !var.irsa_assume_role_enabled ? 1 : 0
 
-  # Example statement (modify it before using this module)
   statement {
-    sid = "Autoscaling"
+    sid = "AtlantisAdmin"
 
     actions = [
-      "autoscaling:DescribeAutoScalingGroups",
-      "autoscaling:DescribeAutoScalingInstances",
-      "autoscaling:DescribeLaunchConfigurations",
-      "autoscaling:DescribeTags",
-      "autoscaling:SetDesiredCapacity",
-      "autoscaling:TerminateInstanceInAutoScalingGroup",
-      "ec2:DescribeLaunchTemplateVersions",
-      "ec2:DescribeInstanceTypes"
+      "*"
     ] # checkov:skip=CKV_AWS_111
 
     resources = [
@@ -32,7 +24,7 @@ data "aws_iam_policy_document" "this_assume" {
   count = local.irsa_role_create && var.irsa_assume_role_enabled ? 1 : 0
 
   statement {
-    sid    = "AllowAssume<$addon-name>Role"
+    sid    = "AllowAssumeAtlantisRole"
     effect = "Allow"
     actions = [
       "sts:AssumeRole"
@@ -48,7 +40,7 @@ resource "aws_iam_policy" "this" {
 
   name        = "${var.irsa_role_name_prefix}-${var.helm_chart_name}"
   path        = "/"
-  description = "Policy for <$addon-name> service"
+  description = "Policy for Atlantis service"
   policy      = var.irsa_assume_role_enabled ? data.aws_iam_policy_document.this_assume[0].json : data.aws_iam_policy_document.this[0].json
 
   tags = var.irsa_tags
