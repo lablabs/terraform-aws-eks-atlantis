@@ -32,14 +32,25 @@ To overcome this issue, the module deploys the ArgoCD application object using t
 
 Create helm release resource and deploy it as argo application (set `enabled = true`, `argo_enabled = true` and `argo_helm_enabled = true`)
 
-<!-- Uncomment paragraph bellow if addon contains IAM resources
 ## AWS IAM resources
+To disable of creation IRSA role and IRSA policy, set `irsa_role_create = false` and `irsa_policy_enabled = false`, respectively.
+To provide your own IRSA role, set the ARN via `irsa_role_arn` and set `irsa_role_create = false`.
 
-To disable of creation IRSA role and IRSA policy, set `irsa_role_create = false` and `irsa_policy_enabled = false`, respectively -->
-
-<!-- Uncomment paragraph below if addon uses Role assuming
 ### Role assuming
-To assume role set `irsa_assume_role_enabled = true` and specify `irsa_assume_role_arn` variable -->
+To assume role set `irsa_assume_role_enabled = true` and specify `irsa_assume_role_arn` variable.
+
+## Configuration
+
+### AWS profiles
+This module facilitates the creation of AWS config file containing profiles that may be used by Atlantis to assume various roles via the IRSA role.
+
+To enable this functionality, set the variable `atlantis_enable_aws_profiles = true`, and provide the config file contents in `atlantis_aws_profiles` (e.g. `atlantis_aws_profiles = file("path/to/config")`).
+
+If `atlantis_override_default_aws_profile = false`, the module will create a default AWS profile `atlantis` and append the contents of `atlantis_aws_profiles` to the final file. Make sure to set `source_profile = atlantis` for all roles in the config.
+The role in the `atlantis` either uses the role created by this module, or the role provided via `irsa_role_arn`.
+
+If `atlantis_override_default_aws_profile = true`, the entire config file will be overridden by `atlantis_aws_profiles`. Source IRSA profile needs to be part of the file provided in `atlantis_aws_profiles`.
+
 
 ## Examples
 
