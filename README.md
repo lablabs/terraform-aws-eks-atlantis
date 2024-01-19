@@ -7,7 +7,7 @@ We help companies build, run, deploy and scale software and infrastructure by em
 ---
 
 [![Terraform validate](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml)
-[![pre-commit](https://github.com/lablabs/terraform-aws-atlantis/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml)
+[![pre-commit](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml)
 
 ## Description
 
@@ -62,9 +62,9 @@ See [Basic example](examples/basic/README.md) for further information.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.19.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.35.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.6.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.11.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.20.0 |
 | <a name="requirement_utils"></a> [utils](#requirement\_utils) | >= 0.17.0 |
 
 ## Modules

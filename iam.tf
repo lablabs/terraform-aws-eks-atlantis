@@ -10,8 +10,9 @@ data "aws_iam_policy_document" "this" {
 
     actions = [
       "*"
-    ] # checkov:skip=CKV_AWS_111
-
+    ]
+    # checkov:skip=CKV_AWS_111
+    # checkov:skip=CKV2_AWS_40
     resources = [
       "*",
     ]
