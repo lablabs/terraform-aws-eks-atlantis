@@ -1,37 +1,10 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS EKS Universal Addon Terraform module
+# AWS EKS Atlantis Terraform module
 
-A Terraform module to deploy the universal addon on Amazon EKS cluster.
+A terraform module to deploy [Atlantis](https://www.runatlantis.io) on Amazon EKS cluster.
 
-[![Terraform validate](https://github.com/lablabs/terraform-aws-eks-universal-addon/actions/workflows/validate.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-universal-addon/actions/workflows/validate.yaml)
-[![pre-commit](https://github.com/lablabs/terraform-aws-eks-universal-addon/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-universal-addon/actions/workflows/pre-commit.yaml)
-
-## Usage
-
-This addon can be used in two ways:
-
-1. **Using the sub modules, i.e. `addon` directly**: This is the recommended way when creating an addon as a simple wrapper without any additional configuration. i.e. no IAM policy, no default Helm values configuration.
-2. **Using the module as a template**: This is the recommended way when an addon would add additional configuration, i.e. multiple IRSA roles.
-
-### Template usage
-
-1. Hit "Use this template" button on the top right corner of this page.
-2. Look for `# FIXME config` comments in the code and update the values according to your needs.
-3. Update .templatesyncignore file to exclude the files you don't want to sync with this template, i.e. add IRSA/OIDC files to the `.templatesyncignore` file when not using them.
-4. Remove `modules` folder as modules within should be used from this repository.
-5. Remove files that are already excluded in `.templatesyncignore` file and not needed for the addon, i.e. `renovate.json`, `.github/workflows/renovate.yaml`, `variables-addon-irsa.tf` (if IRSA is not used)`.
-6. Update examples in the `examples` folder according to your needs.
-7. Run pre-commit hooks to validate the code and refresh README file.
-
-### Template sync
-
-There is a GitHub Action workflow running every night that will automatically sync code with this template using main branch of this repository. It will create a PR with the changes. You can also trigger it manually when needed.
-To enable the workflow GitHub Actions secrets and GitHub Application must be allowed for the repository. Contact the repository owner to set it up.
-
-## Development
-
-1. When modifying modules in the `modules` folder, release them using semantic versioning, i.e. `v0.0.1`, `v0.1.0`, `v1.0.0`. Afterwards create another PR to update the version in the `addon*.tf` files.
-2. When adding variable into `variables.tf` in the `modules` folder add `nullable = false` to the variables when the default value is NOT `null`.`
+[![Terraform validate](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/validate.yaml)
+[![pre-commit](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/lablabs/terraform-aws-eks-atlantis/actions/workflows/pre-commit.yml)
 
 ---
 
@@ -77,9 +50,8 @@ See [basic example](examples/basic) for further information.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_addon"></a> [addon](#module\_addon) | git::https://github.com/lablabs/terraform-aws-eks-universal-addon.git//modules/addon | v0.0.19 |
-| <a name="module_addon-irsa"></a> [addon-irsa](#module\_addon-irsa) | git::https://github.com/lablabs/terraform-aws-eks-universal-addon.git//modules/addon-irsa | v0.0.19 |
-| <a name="module_addon-oidc"></a> [addon-oidc](#module\_addon-oidc) | git::https://github.com/lablabs/terraform-aws-eks-universal-addon.git//modules/addon-oidc | v0.0.19 |
+| <a name="module_addon"></a> [addon](#module\_addon) | git::https://github.com/lablabs/terraform-aws-eks-universal-addon.git//modules/addon | v0.0.23 |
+| <a name="module_addon-irsa"></a> [addon-irsa](#module\_addon-irsa) | git::https://github.com/lablabs/terraform-aws-eks-universal-addon.git//modules/addon-irsa | v0.0.23 |
 ## Resources
 
 | Name | Type |
@@ -97,16 +69,16 @@ See [basic example](examples/basic) for further information.
 | <a name="input_argo_helm_enabled"></a> [argo\_helm\_enabled](#input\_argo\_helm\_enabled) | If set to `true`, the ArgoCD Application manifest will be deployed using Kubernetes provider as a Helm release. Otherwise it'll be deployed as a Kubernetes manifest. See README for more info. Defaults to `false`. | `bool` |
 | <a name="input_argo_helm_values"></a> [argo\_helm\_values](#input\_argo\_helm\_values) | Value overrides to use when deploying ArgoCD Application object with Helm. Defaults to `""`. | `string` |
 | <a name="input_argo_helm_wait_backoff_limit"></a> [argo\_helm\_wait\_backoff\_limit](#input\_argo\_helm\_wait\_backoff\_limit) | Backoff limit for ArgoCD Application Helm release wait job. Defaults to `6`. | `number` |
-| <a name="input_argo_helm_wait_kubectl_version"></a> [argo\_helm\_wait\_kubectl\_version](#input\_argo\_helm\_wait\_kubectl\_version) | Version of kubectl to use for ArgoCD Application wait job. Defaults to `1.33.0`. | `string` |
+| <a name="input_argo_helm_wait_kubectl_version"></a> [argo\_helm\_wait\_kubectl\_version](#input\_argo\_helm\_wait\_kubectl\_version) | Version of kubectl to use for ArgoCD Application wait job. Defaults to `1.33.2`. | `string` |
 | <a name="input_argo_helm_wait_node_selector"></a> [argo\_helm\_wait\_node\_selector](#input\_argo\_helm\_wait\_node\_selector) | Node selector for ArgoCD Application Helm release wait job. Defaults to `{}`. | `map(string)` |
 | <a name="input_argo_helm_wait_timeout"></a> [argo\_helm\_wait\_timeout](#input\_argo\_helm\_wait\_timeout) | Timeout for ArgoCD Application Helm release wait job. Defaults to `10m`. | `string` |
 | <a name="input_argo_helm_wait_tolerations"></a> [argo\_helm\_wait\_tolerations](#input\_argo\_helm\_wait\_tolerations) | Tolerations for ArgoCD Application Helm release wait job. Defaults to `[]`. | `list(any)` |
-| <a name="input_argo_info"></a> [argo\_info](#input\_argo\_info) | ArgoCD Application manifest info parameter. Defaults to `[{"name": "terraform", "value": "true"}]`. | `list(any)` |
-| <a name="input_argo_kubernetes_manifest_computed_fields"></a> [argo\_kubernetes\_manifest\_computed\_fields](#input\_argo\_kubernetes\_manifest\_computed\_fields) | List of paths of fields to be handled as "computed". The user-configured value for the field will be overridden by any different value returned by the API after apply. Defaults to `["metadata.labels", "metadata.annotations", "metadata.finalizers"]`. | `list(string)` |
+| <a name="input_argo_info"></a> [argo\_info](#input\_argo\_info) | ArgoCD Application manifest info parameter. Defaults to `[{ name = "terraform", value = "true" }]`. | `list(any)` |
+| <a name="input_argo_kubernetes_manifest_computed_fields"></a> [argo\_kubernetes\_manifest\_computed\_fields](#input\_argo\_kubernetes\_manifest\_computed\_fields) | List of paths of fields to be handled as `computed`. The user-configured value for the field will be overridden by any different value returned by the API after apply. Defaults to `["metadata.labels", "metadata.annotations", "metadata.finalizers"]`. | `list(string)` |
 | <a name="input_argo_kubernetes_manifest_field_manager_force_conflicts"></a> [argo\_kubernetes\_manifest\_field\_manager\_force\_conflicts](#input\_argo\_kubernetes\_manifest\_field\_manager\_force\_conflicts) | Forcibly override any field manager conflicts when applying the kubernetes manifest resource. Defaults to `false`. | `bool` |
 | <a name="input_argo_kubernetes_manifest_field_manager_name"></a> [argo\_kubernetes\_manifest\_field\_manager\_name](#input\_argo\_kubernetes\_manifest\_field\_manager\_name) | The name of the field manager to use when applying the Kubernetes manifest resource. Defaults to `Terraform`. | `string` |
 | <a name="input_argo_kubernetes_manifest_wait_fields"></a> [argo\_kubernetes\_manifest\_wait\_fields](#input\_argo\_kubernetes\_manifest\_wait\_fields) | A map of fields and a corresponding regular expression with a pattern to wait for. The provider will wait until the field matches the regular expression. Use * for any value. Defaults to `{}`. | `map(string)` |
-| <a name="input_argo_metadata"></a> [argo\_metadata](#input\_argo\_metadata) | ArgoCD Application metadata configuration. Override or create additional metadata parameters. Defaults to `{"finalizers": ["resources-finalizer.argocd.argoproj.io"]}`. | `any` |
+| <a name="input_argo_metadata"></a> [argo\_metadata](#input\_argo\_metadata) | ArgoCD Application metadata configuration. Override or create additional metadata parameters. Defaults to `{ finalizers = ["resources-finalizer.argocd.argoproj.io"] }`. | `any` |
 | <a name="input_argo_name"></a> [argo\_name](#input\_argo\_name) | Name of the ArgoCD Application. Required if `argo_source_type` is set to `kustomize` or `directory`.  If `argo_source_type` is set to `helm`, ArgoCD Application name will equal `helm_release_name`. Defaults to `""`. | `string` |
 | <a name="input_argo_namespace"></a> [argo\_namespace](#input\_argo\_namespace) | Namespace to deploy ArgoCD Application to. Defaults to `argo`. | `string` |
 | <a name="input_argo_operation"></a> [argo\_operation](#input\_argo\_operation) | ArgoCD Application manifest operation parameter. Defaults to `{}`. | `any` |
@@ -114,13 +86,16 @@ See [basic example](examples/basic) for further information.
 | <a name="input_argo_source_path"></a> [argo\_source\_path](#input\_argo\_source\_path) | ArgoCD Application source path. Required if `argo_source_type` is set to `kustomize` or `directory`. Defaults to `""`. | `string` |
 | <a name="input_argo_source_repo_url"></a> [argo\_source\_repo\_url](#input\_argo\_source\_repo\_url) | ArgoCD Application source repo URL. Required if `argo_source_type` is set to `kustomize` or `directory`. Defaults to `""`. | `string` |
 | <a name="input_argo_source_target_revision"></a> [argo\_source\_target\_revision](#input\_argo\_source\_target\_revision) | ArgoCD Application source target revision. Required if `argo_source_type` is set to `kustomize` or `directory`. Defaults to `""`. | `string` |
-| <a name="input_argo_source_type"></a> [argo\_source\_type](#input\_argo\_source\_type) | Source type for ArgoCD Application. Can be either `helm`, `kustomize`, or `directory`. Defaults to `helm`. | `string` |
+| <a name="input_argo_source_type"></a> [argo\_source\_type](#input\_argo\_source\_type) | Source type for ArgoCD Application. Can be either `helm`, `kustomize`, `directory` or `helm-directory`. Defaults to `helm`. | `string` |
 | <a name="input_argo_spec"></a> [argo\_spec](#input\_argo\_spec) | ArgoCD Application spec configuration. Configuration is extended by deep merging with the default spec parameters. Defaults to `{}`. | `any` |
 | <a name="input_argo_spec_override"></a> [argo\_spec\_override](#input\_argo\_spec\_override) | ArgoCD Application spec configuration. Configuration is overriden by merging natively with the default spec parameters. Defaults to `{}`. | `any` |
 | <a name="input_argo_sync_policy"></a> [argo\_sync\_policy](#input\_argo\_sync\_policy) | ArgoCD Application manifest syncPolicy parameter. Defaults to `{}`. | `any` |
+| <a name="input_atlantis_aws_profiles"></a> [atlantis\_aws\_profiles](#input\_atlantis\_aws\_profiles) | Set AWS profiles in .aws/config file. If var.atlantis\_override\_default\_aws\_profile is false, appends to .aws/config, else overrides the config contents | `string` |
+| <a name="input_atlantis_enable_aws_profiles"></a> [atlantis\_enable\_aws\_profiles](#input\_atlantis\_enable\_aws\_profiles) | Whether to enable AWS profiles | `bool` |
+| <a name="input_atlantis_override_default_aws_profile"></a> [atlantis\_override\_default\_aws\_profile](#input\_atlantis\_override\_default\_aws\_profile) | Whether to override default atlantis profile in .aws/config with var.atlantis\_aws\_profiles | `bool` |
 | <a name="input_cluster_identity_oidc_issuer"></a> [cluster\_identity\_oidc\_issuer](#input\_cluster\_identity\_oidc\_issuer) | The OIDC Identity issuer for the cluster (required for IRSA). Defaults to `""`. | `string` |
 | <a name="input_cluster_identity_oidc_issuer_arn"></a> [cluster\_identity\_oidc\_issuer\_arn](#input\_cluster\_identity\_oidc\_issuer\_arn) | The OIDC Identity issuer ARN for the cluster that can be used to associate IAM roles with a Service Account (required for IRSA). Defaults to `""`. | `string` |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster (required for pod identity). Defaults to `""`. | `string` |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster (required for Pod Identity). Defaults to `""`. | `string` |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources. | `bool` |
 | <a name="input_helm_atomic"></a> [helm\_atomic](#input\_helm\_atomic) | If set, installation process purges chart on fail. The wait flag will be set automatically if atomic is used. Defaults to `false`. | `bool` |
 | <a name="input_helm_chart_name"></a> [helm\_chart\_name](#input\_helm\_chart\_name) | Helm chart name to be installed. Required if `argo_source_type` is set to `helm`. Defaults to `""`. | `string` |
@@ -158,40 +133,24 @@ See [basic example](examples/basic) for further information.
 | <a name="input_helm_wait_for_jobs"></a> [helm\_wait\_for\_jobs](#input\_helm\_wait\_for\_jobs) | If wait is enabled, will wait until all Helm Jobs have been completed before marking the release as successful. It will wait for as long as timeout. Defaults to `false`. | `bool` |
 | <a name="input_irsa_additional_policies"></a> [irsa\_additional\_policies](#input\_irsa\_additional\_policies) | Map of the additional policies to be attached to IRSA role. Where key is arbitrary id and value is policy ARN. Defaults to `{}`. | `map(string)` |
 | <a name="input_irsa_assume_role_arns"></a> [irsa\_assume\_role\_arns](#input\_irsa\_assume\_role\_arns) | List of ARNs assumable by the IRSA role. Applied only if `irsa_assume_role_enabled` is `true`. Defaults to `[]`. | `list(string)` |
-| <a name="input_irsa_assume_role_enabled"></a> [irsa\_assume\_role\_enabled](#input\_irsa\_assume\_role\_enabled) | Whether IRSA is allowed to assume role defined by `irsa_assume_role_arn`. Mutually exclusive with `irsa_policy_enabled`. Defaults to `false`. | `bool` |
+| <a name="input_irsa_assume_role_enabled"></a> [irsa\_assume\_role\_enabled](#input\_irsa\_assume\_role\_enabled) | Whether IRSA is allowed to assume role defined by `irsa_assume_role_arn`. Defaults to `false`. | `bool` |
 | <a name="input_irsa_assume_role_policy_condition_test"></a> [irsa\_assume\_role\_policy\_condition\_test](#input\_irsa\_assume\_role\_policy\_condition\_test) | Specifies the condition test to use for the assume role trust policy. Defaults to `StringEquals`. | `string` |
 | <a name="input_irsa_assume_role_policy_condition_values"></a> [irsa\_assume\_role\_policy\_condition\_values](#input\_irsa\_assume\_role\_policy\_condition\_values) | Specifies the values for the assume role trust policy condition. Each entry in this list must follow the required format `system:serviceaccount:$service_account_namespace:$service_account_name`. If this variable is left as the default, `local.irsa_assume_role_policy_condition_values_default` is used instead, which is a list containing a single value. Note that if this list is defined, the `service_account_name` and `service_account_namespace` variables are ignored. Defaults to `[]`. | `list(string)` |
 | <a name="input_irsa_permissions_boundary"></a> [irsa\_permissions\_boundary](#input\_irsa\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the IRSA role. Defaults to `null`. | `string` |
 | <a name="input_irsa_policy"></a> [irsa\_policy](#input\_irsa\_policy) | AWS IAM policy JSON document to be attached to the IRSA role. Applied only if `irsa_policy_enabled` is `true`. Defaults to `""`. | `string` |
-| <a name="input_irsa_policy_enabled"></a> [irsa\_policy\_enabled](#input\_irsa\_policy\_enabled) | Whether to create IAM policy specified by `irsa_policy`. Mutually exclusive with `irsa_assume_role_enabled`. Defaults to `false`. | `bool` |
+| <a name="input_irsa_policy_enabled"></a> [irsa\_policy\_enabled](#input\_irsa\_policy\_enabled) | Whether to create IAM policy specified by `irsa_policy`. Defaults to `false`. | `bool` |
+| <a name="input_irsa_role_additional_trust_policies"></a> [irsa\_role\_additional\_trust\_policies](#input\_irsa\_role\_additional\_trust\_policies) | Map of additional trust policy statements to attach to the IRSA role where map key is a statement SID and value is a statement object. Defaults to `{}`. | `map(any)` |
 | <a name="input_irsa_role_create"></a> [irsa\_role\_create](#input\_irsa\_role\_create) | Whether to create IRSA role and annotate Service Account. Defaults to `true`. | `bool` |
 | <a name="input_irsa_role_name"></a> [irsa\_role\_name](#input\_irsa\_role\_name) | IRSA role name. The value is prefixed by `irsa_role_name_prefix`. Either `irsa_role_name` or `irsa_role_name_prefix` must be set. Defaults to `""`. | `string` |
 | <a name="input_irsa_role_name_prefix"></a> [irsa\_role\_name\_prefix](#input\_irsa\_role\_name\_prefix) | IRSA role name prefix. Either `irsa_role_name_prefix` or `irsa_role_name` must be set. Defaults to `""`. | `string` |
 | <a name="input_irsa_tags"></a> [irsa\_tags](#input\_irsa\_tags) | IRSA resources tags. Defaults to `{}`. | `map(string)` |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | The Kubernetes Namespace in which the Helm chart will be installed (required). | `string` |
-| <a name="input_oidc_additional_policies"></a> [oidc\_additional\_policies](#input\_oidc\_additional\_policies) | Map of the additional policies to be attached to OIDC role. Where key is arbitrary id and value is policy ARN. Defaults to `{}`. | `map(string)` |
-| <a name="input_oidc_assume_role_arns"></a> [oidc\_assume\_role\_arns](#input\_oidc\_assume\_role\_arns) | List of ARNs assumable by the OIDC role. Applied only if `oidc_assume_role_enabled` is `true`. Defaults to `[]`. | `list(string)` |
-| <a name="input_oidc_assume_role_enabled"></a> [oidc\_assume\_role\_enabled](#input\_oidc\_assume\_role\_enabled) | Whether OIDC is allowed to assume role defined by `oidc_assume_role_arn`. Mutually exclusive with `oidc_policy_enabled`. Defaults to `false`. | `bool` |
-| <a name="input_oidc_assume_role_policy_condition_test"></a> [oidc\_assume\_role\_policy\_condition\_test](#input\_oidc\_assume\_role\_policy\_condition\_test) | Specifies the condition test to use for the assume role trust policy. Defaults to `StringLike`. | `string` |
-| <a name="input_oidc_assume_role_policy_condition_values"></a> [oidc\_assume\_role\_policy\_condition\_values](#input\_oidc\_assume\_role\_policy\_condition\_values) | Specifies the values for the assume role trust policy condition. Defaults to `[]`. | `list(string)` |
-| <a name="input_oidc_assume_role_policy_condition_variable"></a> [oidc\_assume\_role\_policy\_condition\_variable](#input\_oidc\_assume\_role\_policy\_condition\_variable) | Specifies the variable to use for the assume role trust policy. Defaults to `""`. | `string` |
-| <a name="input_oidc_custom_provider_arn"></a> [oidc\_custom\_provider\_arn](#input\_oidc\_custom\_provider\_arn) | Specifies a custom OIDC provider ARN. Defaults to `""`. | `string` |
-| <a name="input_oidc_openid_client_ids"></a> [oidc\_openid\_client\_ids](#input\_oidc\_openid\_client\_ids) | List of OpenID Connect client IDs that are allowed to assume the OIDC provider. Defaults to `[]`. | `list(string)` |
-| <a name="input_oidc_openid_provider_url"></a> [oidc\_openid\_provider\_url](#input\_oidc\_openid\_provider\_url) | OIDC provider URL. Defaults to `""`. | `string` |
-| <a name="input_oidc_openid_thumbprints"></a> [oidc\_openid\_thumbprints](#input\_oidc\_openid\_thumbprints) | List of thumbprints of the OIDC provider's server certificate. Defaults to `[]`. | `list(string)` |
-| <a name="input_oidc_permissions_boundary"></a> [oidc\_permissions\_boundary](#input\_oidc\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the OIDC role. Defaults to `null`. | `string` |
-| <a name="input_oidc_policy"></a> [oidc\_policy](#input\_oidc\_policy) | AWS IAM policy JSON document to be attached to the OIDC role. Applied only if `oidc_policy_enabled` is `true`. Defaults to `""`. | `string` |
-| <a name="input_oidc_policy_enabled"></a> [oidc\_policy\_enabled](#input\_oidc\_policy\_enabled) | Whether to create IAM policy specified by `oidc_policy`. Mutually exclusive with `oidc_assume_role_enabled`. Defaults to `false`. | `bool` |
-| <a name="input_oidc_provider_create"></a> [oidc\_provider\_create](#input\_oidc\_provider\_create) | Whether to create OIDC provider. Set to `false` if you want to disable default OIDC provider when `oidc_custom_provider_arn` is set. Defaults to `true`. | `bool` |
-| <a name="input_oidc_role_create"></a> [oidc\_role\_create](#input\_oidc\_role\_create) | Whether to create OIDC role. Defaults to `true`. | `bool` |
-| <a name="input_oidc_role_name"></a> [oidc\_role\_name](#input\_oidc\_role\_name) | OIDC role name. The value is prefixed by `oidc_role_name_prefix`. Either `oidc_role_name` or `oidc_role_name_prefix` must be set. Defaults to `""`. | `string` |
-| <a name="input_oidc_role_name_prefix"></a> [oidc\_role\_name\_prefix](#input\_oidc\_role\_name\_prefix) | OIDC role name prefix. Either `oidc_role_name_prefix` or `oidc_role_name` must be set. Defaults to `""`. | `string` |
-| <a name="input_oidc_tags"></a> [oidc\_tags](#input\_oidc\_tags) | OIDC resources tags. Defaults to `{}`. | `map(string)` |
-| <a name="input_pod_identity_additional_policies"></a> [pod\_identity\_additional\_policies](#input\_pod\_identity\_additional\_policies) | Map of the additional policies to be attached to pod identity role. Where key is arbitrary id and value is policy ARN. Defaults to `{}`. | `map(string)` |
-| <a name="input_pod_identity_permissions_boundary"></a> [pod\_identity\_permissions\_boundary](#input\_pod\_identity\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the pod identity role. Defaults to `null`. | `string` |
-| <a name="input_pod_identity_policy"></a> [pod\_identity\_policy](#input\_pod\_identity\_policy) | AWS IAM policy JSON document to be attached to the pod identity role. Applied only if `pod_identity_policy_enabled` is `true`. Defaults to `""`. | `string` |
+| <a name="input_pod_identity_additional_policies"></a> [pod\_identity\_additional\_policies](#input\_pod\_identity\_additional\_policies) | Map of the additional policies to be attached to Pod Identity role. Where key is arbitrary id and value is policy ARN. Defaults to `{}`. | `map(string)` |
+| <a name="input_pod_identity_permissions_boundary"></a> [pod\_identity\_permissions\_boundary](#input\_pod\_identity\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the Pod Identity role. Defaults to `null`. | `string` |
+| <a name="input_pod_identity_policy"></a> [pod\_identity\_policy](#input\_pod\_identity\_policy) | AWS IAM policy JSON document to be attached to the Pod Identity role. Applied only if `pod_identity_policy_enabled` is `true`. Defaults to `""`. | `string` |
 | <a name="input_pod_identity_policy_enabled"></a> [pod\_identity\_policy\_enabled](#input\_pod\_identity\_policy\_enabled) | Whether to create IAM policy specified by `pod_identity_policy`. Defaults to `false`. | `bool` |
-| <a name="input_pod_identity_role_create"></a> [pod\_identity\_role\_create](#input\_pod\_identity\_role\_create) | Whether to create pod identity role and annotate Service Account. Defaults to `false`. | `bool` |
+| <a name="input_pod_identity_role_additional_trust_policies"></a> [pod\_identity\_role\_additional\_trust\_policies](#input\_pod\_identity\_role\_additional\_trust\_policies) | Additional trust policy statements to attach to the Pod Identity role where map key is a statement SID and value is a statement object. Defaults to `{}`. | `map(any)` |
+| <a name="input_pod_identity_role_create"></a> [pod\_identity\_role\_create](#input\_pod\_identity\_role\_create) | Whether to create Pod Identity role and annotate Service Account. Defaults to `false`. | `bool` |
 | <a name="input_pod_identity_role_name"></a> [pod\_identity\_role\_name](#input\_pod\_identity\_role\_name) | Pod identity role name. The value is prefixed by `pod_identity_role_name_prefix`. Either `pod_identity_role_name` or `pod_identity_role_name_prefix` must be set. Defaults to `""`. | `string` |
 | <a name="input_pod_identity_role_name_prefix"></a> [pod\_identity\_role\_name\_prefix](#input\_pod\_identity\_role\_name\_prefix) | Pod identity role name prefix. Either `pod_identity_role_name_prefix` or `pod_identity_role_name` must be set. Defaults to `""`. | `string` |
 | <a name="input_pod_identity_tags"></a> [pod\_identity\_tags](#input\_pod\_identity\_tags) | Pod identity resources tags. Defaults to `{}`. | `map(string)` |
@@ -206,8 +165,7 @@ See [basic example](examples/basic) for further information.
 | Name | Description |
 |------|-------------|
 | <a name="output_addon"></a> [addon](#output\_addon) | The addon module outputs |
-| <a name="output_addon_irsa"></a> [addon\_irsa](#output\_addon\_irsa) | The addon IRSA module outputs |
-| <a name="output_addon_oidc"></a> [addon\_oidc](#output\_addon\_oidc) | The addon oidc module outputs |
+| <a name="output_addon_irsa"></a> [addon\_irsa](#output\_addon\_irsa) | The IRSA addon module outputs |
 ## Contributing and reporting issues
 
 Feel free to create an issue in this repository if you have questions, suggestions or feature requests.
