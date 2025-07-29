@@ -7,7 +7,6 @@ moved {
 moved {
   from = helm_release.this
   to   = module.addon.helm_release.this
-
 }
 
 moved {
@@ -18,4 +17,14 @@ moved {
 moved {
   from = kubernetes_job.helm_argo_application_wait
   to   = module.addon.kubernetes_job.helm_argo_application_wait
+}
+
+moved {
+  from = aws_iam_role.this[0]
+  to   = module.addon-irsa["atlantis"].aws_iam_role.irsa[0]
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.this_additional["AssumeAtlantisWorkers"]
+  to   = module.addon-irsa["atlantis"].aws_iam_role_policy_attachment.irsa_additional["AssumeAtlantisWorkers"]
 }

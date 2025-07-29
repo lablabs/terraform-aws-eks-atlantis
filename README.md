@@ -42,9 +42,9 @@ See [basic example](examples/basic) for further information.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.16 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.6 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.20 |
-| <a name="requirement_utils"></a> [utils](#requirement\_utils) | ~> 0.17 |
+| <a name="requirement_utils"></a> [utils](#requirement\_utils) | ~> 1 |
 
 ## Modules
 
@@ -166,6 +166,7 @@ See [basic example](examples/basic) for further information.
 |------|-------------|
 | <a name="output_addon"></a> [addon](#output\_addon) | The addon module outputs |
 | <a name="output_addon_irsa"></a> [addon\_irsa](#output\_addon\_irsa) | The IRSA addon module outputs |
+| <a name="output_iam_role_attributes_arn"></a> [iam\_role\_attributes\_arn](#output\_iam\_role\_attributes\_arn) | Atlantis IAM role attributes |
 ## Contributing and reporting issues
 
 Feel free to create an issue in this repository if you have questions, suggestions or feature requests.
