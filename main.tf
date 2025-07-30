@@ -27,6 +27,7 @@ locals {
       } : tomap({})
     }
     aws = var.atlantis_enable_aws_profiles ? {
+      directory = var.atlantis_aws_directory
       config = templatefile("${path.module}/templates/.aws/config", {
         override_default_irsa_profile = var.atlantis_override_default_aws_profile
         role_arn                      = module.addon-irsa[local.addon.name].irsa_role_enabled ? module.addon-irsa[local.addon.name].iam_role_attributes.arn : ""

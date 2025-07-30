@@ -18,6 +18,12 @@ variable "atlantis_aws_profiles" {
   description = "Set AWS profiles in .aws/config file. If var.atlantis_override_default_aws_profile is false, appends to .aws/config, else overrides the config contents"
 }
 
+variable "atlantis_aws_directory" {
+  type        = string
+  default     = "/tmp/.aws/"
+  description = "Set where AWS shared credentials should be stored. Default is '/tmp/.aws' to keep backward compatibility"
+}
+
 variable "atlantis_override_default_aws_profile" {
   type        = bool
   default     = false
