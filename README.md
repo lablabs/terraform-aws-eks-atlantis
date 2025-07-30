@@ -166,7 +166,7 @@ See [basic example](examples/basic) for further information.
 |------|-------------|
 | <a name="output_addon"></a> [addon](#output\_addon) | The addon module outputs |
 | <a name="output_addon_irsa"></a> [addon\_irsa](#output\_addon\_irsa) | The IRSA addon module outputs |
-| <a name="output_iam_role_attributes_arn"></a> [iam\_role\_attributes\_arn](#output\_iam\_role\_attributes\_arn) | Atlantis IAM role attributes |
+| <a name="output_iam_role_attributes"></a> [iam\_role\_attributes](#output\_iam\_role\_attributes) | Atlantis IAM role attributes |
 ## Contributing and reporting issues
 
 Feel free to create an issue in this repository if you have questions, suggestions or feature requests.
