@@ -25,6 +25,6 @@ moved {
 }
 
 moved {
-  from = aws_iam_role_policy_attachment.this_additional["AssumeAtlantisWorkers"]
-  to   = module.addon-irsa["atlantis"].aws_iam_role_policy_attachment.irsa_additional["AssumeAtlantisWorkers"]
+  from = aws_iam_role_policy_attachment.this_additional
+  to   = module.addon-irsa["atlantis"].aws_iam_role_policy_attachment.irsa_additional
 }
