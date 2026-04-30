@@ -1,0 +1,4 @@
+outputs.tf
+templates/
+variables-addon-oidc.tf
+addon-oidc.tf
